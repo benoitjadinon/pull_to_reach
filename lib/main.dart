@@ -31,9 +31,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: PullToReach(
         items: [
-          PullToReachItem("Release for settings"),
-          PullToReachItem("Release for search"),
-          PullToReachItem("Release for something else"),
+          PullToReachItem(text: "Release for settings"),
+          PullToReachItem(text: "Release for search"),
+          PullToReachItem(text: "Release for something else"),
         ],
         child: ListView.builder(
             itemCount: 100,

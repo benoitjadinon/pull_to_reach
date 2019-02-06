@@ -4,8 +4,12 @@ import 'package:pull_down_to_reach/reachable_index_calculator.dart';
 
 class PullToReachItem {
   final String text;
+  final double weight;
 
-  PullToReachItem(this.text);
+  PullToReachItem({
+    @required this.text,
+    this.weight = 1,
+  });
 }
 
 class PullToReach extends StatefulWidget {
@@ -51,9 +55,9 @@ class _PullToReachState extends State<PullToReach>
       ),
     )..addListener(() => _checkItemSelection(_positionFactor.value));
 
-    indexCalculator = ReachableIndexCalculator(
+    indexCalculator = ReachableIndexCalculator.withCount(
       minScrollPosition: 0,
-      maxScrollPosition: widget.overshootLimit,
+      maxScrollPosition: 1,
       itemCount: widget.items.length,
     );
 
@@ -76,7 +80,7 @@ class _PullToReachState extends State<PullToReach>
           animation: _positionFactor,
           builder: (context, _) {
             var safePadding = MediaQuery.of(context).padding.top;
-            var padding = 8.0;
+            var padding = 64.0;
 
             return Container(
               alignment: Alignment.topCenter,
@@ -97,12 +101,6 @@ class _PullToReachState extends State<PullToReach>
         child
       ],
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    // TODO check and adjust theming if needed
-    super.didChangeDependencies();
   }
 
   @override
@@ -146,7 +144,7 @@ class _PullToReachState extends State<PullToReach>
   }
 
   void _checkItemSelection(double progress) {
-    var index = indexCalculator.getItemIndex(progress);
+    var index = indexCalculator.getItemIndexForPosition(progress);
     if (_itemIndex != index) {
       _itemIndex = index;
       //TODO send notification

@@ -1,10 +1,26 @@
 import 'package:meta/meta.dart';
 import 'package:pull_down_to_reach/range.dart';
+import 'package:pull_down_to_reach/util.dart';
+
+@immutable
+class WeightedIndex {
+  final int index;
+  final double weight;
+
+  WeightedIndex({
+    @required this.index,
+    @required this.weight,
+  });
+}
 
 abstract class ReachableIndexCalculator {
-  int getItemIndex(double scrollPosition);
+  int getItemIndexForPosition(double scrollPosition);
 
-  factory ReachableIndexCalculator({
+  // -----
+  // Factories
+  // -----
+
+  static ReachableIndexCalculator withCount({
     @required double minScrollPosition,
     @required double maxScrollPosition,
     @required int itemCount,
@@ -12,7 +28,23 @@ abstract class ReachableIndexCalculator {
       _ReachableIndexCalculatorImpl(
         minScrollPosition,
         maxScrollPosition,
-        itemCount,
+        mapIndex(
+            end: itemCount,
+            mapper: (index) => WeightedIndex(
+                  index: index,
+                  weight: 1,
+                )),
+      );
+
+  static ReachableIndexCalculator withIndices({
+    @required double minScrollPosition,
+    @required double maxScrollPosition,
+    @required List<WeightedIndex> indices,
+  }) =>
+      _ReachableIndexCalculatorImpl(
+        minScrollPosition,
+        maxScrollPosition,
+        indices,
       );
 }
 
@@ -20,18 +52,16 @@ class _ReachableIndexCalculatorImpl implements ReachableIndexCalculator {
   final double minScrollPosition;
   final double maxScrollPosition;
 
-  final int itemCount;
-
+  final List<WeightedIndex> indices;
   List<Range> _ranges;
 
   _ReachableIndexCalculatorImpl(
-    this.minScrollPosition,
-    this.maxScrollPosition,
-    this.itemCount,
-  ) : _ranges = _createRanges(itemCount, minScrollPosition, maxScrollPosition);
+      this.minScrollPosition, this.maxScrollPosition, this.indices) {
+    _ranges = _createRanges(indices, minScrollPosition, maxScrollPosition);
+  }
 
   @override
-  int getItemIndex(double scrollPosition) {
+  int getItemIndexForPosition(double scrollPosition) {
     var range = _ranges.firstWhere(
       (range) => range.isInRange(scrollPosition),
       orElse: () => null,
@@ -40,27 +70,59 @@ class _ReachableIndexCalculatorImpl implements ReachableIndexCalculator {
     return range?.index ?? -1;
   }
 
-  // -----
-  // Initializer
-  // -----
+  List<Range> _createRanges(
+      List<WeightedIndex> indices, double min, double max) {
+    var count = indices.length;
 
-  static List<Range> _createRanges(int count, double min, double max) {
     var ranges = List<Range>();
-    var rangeSize = max / count;
 
-    for (int i = 0; i <= count; i++) {
+    double previousEnd = 0;
+    for (int i = 0; i < count; i++) {
       var isFirst = i == 0;
       var isLast = i == count - 1;
 
-      var start = isFirst ? double.negativeInfinity : i.toDouble() * rangeSize;
-      var end =
-          isLast ? double.infinity : (i.toDouble() * rangeSize) + rangeSize;
+      var currentIndex = indices[i];
 
+      double start;
+      if (isFirst) {
+        start = double.negativeInfinity;
+      } else {
+        start = previousEnd;
+      }
+
+      double end;
+      if (isLast) {
+        end = double.infinity;
+      } else {
+        var rangeSize = _rangeSizeForIndex(
+          index: currentIndex,
+          other: indices,
+          maxValue: maxScrollPosition,
+        );
+
+        end = previousEnd + rangeSize;
+      }
+
+      print(
+          "${currentIndex.index}: from: $start to: $end. diff: ${end - start}");
       ranges.add(
-        Range(i, start, end),
+        Range(currentIndex.index, start, end),
       );
+
+      previousEnd = end;
     }
 
     return ranges;
+  }
+
+  double _rangeSizeForIndex(
+      {WeightedIndex index, List<WeightedIndex> other, double maxValue}) {
+    var weightSum = sum<WeightedIndex>(
+      items: other,
+      mapper: (index) => index.weight,
+    );
+
+    var weightPercent = weightSum / index.weight;
+    return maxValue / weightPercent;
   }
 }
