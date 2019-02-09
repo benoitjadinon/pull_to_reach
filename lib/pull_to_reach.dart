@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pull_down_to_reach/pull_to_reach_scope.dart';
 import 'package:pull_down_to_reach/reachable_index_calculator.dart';
-
-class PullToReachItem {
-  final String text;
-  final double weight;
-
-  PullToReachItem({
-    @required this.text,
-    this.weight = 1,
-  });
-}
+import 'package:pull_down_to_reach/reachable_item.dart';
 
 class PullToReach extends StatefulWidget {
   final Widget child;
-  final List<PullToReachItem> items;
+  final List<ReachableItem> items;
   final double instructionTextWeight;
-  final ValueChanged<PullToReachItem> onItemSelected;
 
   // How much the scroll's drag gesture can overshoot
   final double overshootLimit;
@@ -28,8 +19,7 @@ class PullToReach extends StatefulWidget {
   PullToReach({
     @required this.child,
     @required this.items,
-    @required this.onItemSelected,
-    this.instructionTextWeight = 2.7,
+    this.instructionTextWeight = 2.2,
     this.overshootLimit = 1.2,
     this.dragExtentPercentage = 0.5,
   });
@@ -50,8 +40,6 @@ class _PullToReachState extends State<PullToReach>
 
   ReachableIndexCalculator indexCalculator;
 
-  List<PullToReachItem> _internalItems = List();
-
   @override
   void initState() {
     _positionController = AnimationController(vsync: this);
@@ -63,17 +51,10 @@ class _PullToReachState extends State<PullToReach>
       ),
     )..addListener(() => _checkItemSelection(_positionFactor.value));
 
-    _internalItems = List()
-      ..add(PullToReachItem(
-        text: "Pull to reach",
-        weight: widget.instructionTextWeight,
-      ))
-      ..addAll(widget.items);
-
     indexCalculator = ReachableIndexCalculator.withIndices(
       minScrollPosition: 0,
       maxScrollPosition: 1,
-      indices: _createWeightedIndices(_internalItems),
+      indices: _createWeightedIndices(widget.items),
     );
 
     super.initState();
@@ -103,7 +84,7 @@ class _PullToReachState extends State<PullToReach>
                 top: (padding * _positionFactor.value) + safePadding,
               ),
               child: Text(
-                _internalItems[_itemIndex].text,
+                widget.items[_itemIndex].text,
                 style: Theme.of(context)
                     .primaryTextTheme
                     .title
@@ -141,7 +122,7 @@ class _PullToReachState extends State<PullToReach>
       // meaning that the user release the finger
       // in this case we want to fire the currently selected item index
       if (notification.dragDetails == null) {
-        _fireSelectionEvent();
+        _updateSelectIndex();
       }
       // dragging is done by the user, notify on the next release
       else {
@@ -178,15 +159,8 @@ class _PullToReachState extends State<PullToReach>
     var index = indexCalculator.getItemIndexForPosition(progress);
     if (_itemIndex != index) {
       _itemIndex = index;
+      _updateFocusIndex();
     }
-  }
-
-  void _fireSelectionEvent() {
-    if (_itemIndex == 0 || _shouldNotify == false) return;
-    print("selceted index $_itemIndex");
-
-    widget.onItemSelected(_internalItems[_itemIndex]);
-    _shouldNotify = false;
   }
 
   void _resetDragOffset() {
@@ -194,10 +168,25 @@ class _PullToReachState extends State<PullToReach>
   }
 
   // -----
+  // PullToReachScope updates
+  // -----
+
+  void _updateSelectIndex() {
+    if (_shouldNotify == false) return;
+
+    PullToReachScope.of(context).setSelectIndex(_itemIndex);
+    _shouldNotify = false;
+  }
+
+  void _updateFocusIndex() {
+    PullToReachScope.of(context).setFocusIndex(_itemIndex);
+  }
+
+  // -----
   // Helper
   // -----
 
-  List<WeightedIndex> _createWeightedIndices(List<PullToReachItem> items) {
+  List<WeightedIndex> _createWeightedIndices(List<ReachableItem> items) {
     List<WeightedIndex> indices = List();
 
     for (int i = 0; i < items.length; i++) {
