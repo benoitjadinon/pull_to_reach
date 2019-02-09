@@ -35,6 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
           PullToReachItem(text: "Release for search"),
           PullToReachItem(text: "Release for something else"),
         ],
+        onItemSelected: (selectedItem) {
+          _showPage(selectedItem.text);
+        },
         child: ListView.builder(
             itemCount: 100,
             itemBuilder: (context, index) {
@@ -63,5 +66,20 @@ class _MyHomePageState extends State<MyHomePage> {
             }),
       ),
     );
+  }
+
+  void _showPage(String text) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        var titleTheme = Theme.of(context)
+            .primaryTextTheme
+            .title
+            .copyWith(color: Colors.black45);
+
+        return Scaffold(
+            appBar: AppBar(title: Text(text)),
+            body: Center(child: Text(text, style: titleTheme)));
+      },
+    ));
   }
 }

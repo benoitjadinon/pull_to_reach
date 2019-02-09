@@ -15,6 +15,8 @@ class PullToReachItem {
 class PullToReach extends StatefulWidget {
   final Widget child;
   final List<PullToReachItem> items;
+  final double instructionTextWeight;
+  final ValueChanged<PullToReachItem> onItemSelected;
 
   // How much the scroll's drag gesture can overshoot
   final double overshootLimit;
@@ -26,7 +28,9 @@ class PullToReach extends StatefulWidget {
   PullToReach({
     @required this.child,
     @required this.items,
-    this.overshootLimit = 2,
+    @required this.onItemSelected,
+    this.instructionTextWeight = 2.7,
+    this.overshootLimit = 1.2,
     this.dragExtentPercentage = 0.5,
   });
 
@@ -42,7 +46,11 @@ class _PullToReachState extends State<PullToReach>
   double _dragOffset = 0;
   int _itemIndex = 0;
 
+  bool _shouldNotify = false;
+
   ReachableIndexCalculator indexCalculator;
+
+  List<PullToReachItem> _internalItems = List();
 
   @override
   void initState() {
@@ -55,10 +63,17 @@ class _PullToReachState extends State<PullToReach>
       ),
     )..addListener(() => _checkItemSelection(_positionFactor.value));
 
-    indexCalculator = ReachableIndexCalculator.withCount(
+    _internalItems = List()
+      ..add(PullToReachItem(
+        text: "Pull to reach",
+        weight: widget.instructionTextWeight,
+      ))
+      ..addAll(widget.items);
+
+    indexCalculator = ReachableIndexCalculator.withIndices(
       minScrollPosition: 0,
       maxScrollPosition: 1,
-      itemCount: widget.items.length,
+      indices: _createWeightedIndices(_internalItems),
     );
 
     super.initState();
@@ -88,7 +103,7 @@ class _PullToReachState extends State<PullToReach>
                 top: (padding * _positionFactor.value) + safePadding,
               ),
               child: Text(
-                widget.items[_itemIndex].text,
+                _internalItems[_itemIndex].text,
                 style: Theme.of(context)
                     .primaryTextTheme
                     .title
@@ -109,6 +124,10 @@ class _PullToReachState extends State<PullToReach>
     super.dispose();
   }
 
+  // -----
+  // Handle notifications
+  // -----
+
   bool _handleGlowNotification(OverscrollIndicatorNotification notification) {
     if (notification.depth != 0 || !notification.leading) return false;
 
@@ -118,8 +137,20 @@ class _PullToReachState extends State<PullToReach>
 
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
+      // whenever dragDetails are null the scrolling happened without users input
+      // meaning that the user release the finger
+      // in this case we want to fire the currently selected item index
+      if (notification.dragDetails == null) {
+        _fireSelectionEvent();
+      }
+      // dragging is done by the user, notify on the next release
+      else {
+        _shouldNotify = true;
+      }
+
+      // user is scrolling down
       if (notification.metrics.extentBefore > 0.0) {
-        _dismiss();
+        _resetDragOffset();
       } else {
         _dragOffset -= notification.scrollDelta;
         _checkDragOffset(notification.metrics.viewportDimension);
@@ -147,11 +178,35 @@ class _PullToReachState extends State<PullToReach>
     var index = indexCalculator.getItemIndexForPosition(progress);
     if (_itemIndex != index) {
       _itemIndex = index;
-      //TODO send notification
     }
   }
 
-  void _dismiss() {
+  void _fireSelectionEvent() {
+    if (_itemIndex == 0 || _shouldNotify == false) return;
+    print("selceted index $_itemIndex");
+
+    widget.onItemSelected(_internalItems[_itemIndex]);
+    _shouldNotify = false;
+  }
+
+  void _resetDragOffset() {
     _dragOffset = 0;
+  }
+
+  // -----
+  // Helper
+  // -----
+
+  List<WeightedIndex> _createWeightedIndices(List<PullToReachItem> items) {
+    List<WeightedIndex> indices = List();
+
+    for (int i = 0; i < items.length; i++) {
+      indices.add(WeightedIndex(
+        index: i,
+        weight: items[i].weight,
+      ));
+    }
+
+    return indices;
   }
 }
