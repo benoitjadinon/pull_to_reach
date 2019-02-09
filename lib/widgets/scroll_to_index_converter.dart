@@ -3,14 +3,11 @@ import 'package:flutter/widgets.dart';
 import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
 import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
-import 'package:pull_down_to_reach/widgets/reachable_item.dart';
 
 class ScrollToIndexConverter extends StatefulWidget {
   final Widget child;
-  final List<ReachableItem> items;
+  final List<WeightedIndex> items;
 
-  // The over-scroll distance that moves the info text to its maximum
-  // displacement, as a percentage of the scrollable's container extent.
   final double dragExtentPercentage;
 
   ScrollToIndexConverter({
@@ -33,12 +30,7 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
 
   @override
   void initState() {
-    indexCalculator = IndexCalculator.withIndices(
-      minScrollPosition: 0,
-      maxScrollPosition: 1,
-      indices: _createWeightedIndices(widget.items),
-    );
-
+    indexCalculator = IndexCalculator(indices: widget.items);
     super.initState();
   }
 
@@ -68,7 +60,10 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     }
 
     var progress = _calculateScrollProgress(notification);
-    var index = indexCalculator.getItemIndexForPosition(progress);
+    var index = indexCalculator.getIndexForScrollPercent(progress);
+
+    print(progress);
+    print(index);
 
     if (_itemIndex != index) {
       setState(() => _itemIndex = index);
@@ -81,10 +76,9 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
   bool _didDragEnd(ScrollNotification notification) {
     if (notification.metrics.extentBefore > 0) return false;
 
-    // whenever dragDetails are null the scrolling happened without users input
-    // meaning that the user release the finger
-    // in this case the drag has ended
-    // for Cupertino Scrollables the ScrollEndNotification can not be used
+    // Whenever dragDetails are null the scrolling happened without users input
+    // meaning that the user release the finger --> drag has ended.
+    // For Cupertino Scrollables the ScrollEndNotification can not be used
     // since it will be send after the list scroll has completely ended and
     // the list is in its initial state
     if (notification is ScrollUpdateNotification &&
@@ -140,22 +134,5 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
 
   void _updateFocusIndex() {
     PullToReachScope.of(context).setFocusIndex(_itemIndex);
-  }
-
-  // -----
-  // Helper
-  // -----
-
-  List<WeightedIndex> _createWeightedIndices(List<ReachableItem> items) {
-    List<WeightedIndex> indices = List();
-
-    for (int i = 0; i < items.length; i++) {
-      indices.add(WeightedIndex(
-        index: i,
-        weight: items[i].weight,
-      ));
-    }
-
-    return indices;
   }
 }

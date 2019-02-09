@@ -4,31 +4,15 @@ import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/util.dart';
 
 abstract class IndexCalculator {
-  int getItemIndexForPosition(double scrollPosition);
+  int getIndexForScrollPercent(double scrollPercent);
 
   // -----
   // Factories
   // -----
 
-  static IndexCalculator withCount({
-    @required double minScrollPosition,
-    @required double maxScrollPosition,
-    @required int itemCount,
-  }) =>
-      _IndexCalculatorImpl(
-        minScrollPosition,
-        maxScrollPosition,
-        mapIndex(
-            end: itemCount,
-            mapper: (index) => WeightedIndex(
-                  index: index,
-                  weight: 1,
-                )),
-      );
-
-  static IndexCalculator withIndices({
-    @required double minScrollPosition,
-    @required double maxScrollPosition,
+  factory IndexCalculator({
+    double minScrollPosition = 0,
+    double maxScrollPosition = 1,
     @required List<WeightedIndex> indices,
   }) =>
       _IndexCalculatorImpl(
@@ -51,9 +35,9 @@ class _IndexCalculatorImpl implements IndexCalculator {
   }
 
   @override
-  int getItemIndexForPosition(double scrollPosition) {
+  int getIndexForScrollPercent(double scrollPercent) {
     var range = _ranges.firstWhere(
-      (range) => range.isInRange(scrollPosition),
+      (range) => range.isInRange(scrollPercent),
       orElse: () => null,
     );
 

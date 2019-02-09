@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 import 'package:pull_down_to_reach/widgets/reachable_icon.dart';
-import 'package:pull_down_to_reach/widgets/reachable_item.dart';
 import 'package:pull_down_to_reach/widgets/scroll_to_index_converter.dart';
 
 void main() => runApp(MyApp());
@@ -33,33 +33,31 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return PullToReachScope(
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title: Text("Pull down!"),
+          actions: [
+            ReachableIcon(
+              child: Icon(Icons.search),
+              index: 2,
+              onSelect: () => _showPage("search!"),
+            ),
+            ReachableIcon(
+                child: Icon(Icons.settings),
+                index: 1,
+                onSelect: () => _showPage("settings!")),
+          ],
+        ),
         body: ScrollToIndexConverter(
           items: [
-            ReachableItem(text: "Pull to reach", weight: 2),
-            ReachableItem(text: "Release for settings"),
-            ReachableItem(text: "Release for search"),
-            ReachableItem(text: "Release for something else"),
+            WeightedIndex(index: 0, weight: 1.5),
+            WeightedIndex(index: 1),
+            WeightedIndex(index: 2),
+            WeightedIndex(index: 3),
           ],
           child: ListView.builder(
               itemCount: 100,
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  return AppBar(
-                    title: Text("Pull down!"),
-                    actions: [
-                      ReachableIcon(
-                        child: Icon(Icons.search),
-                        index: 2,
-                        onSelect: () => _showPage("search!"),
-                      ),
-                      ReachableIcon(
-                          child: Icon(Icons.settings),
-                          index: 1,
-                          onSelect: () => _showPage("settings!")),
-                    ],
-                  );
-                }
-
                 return Container(
                   height: 50,
                   alignment: Alignment.center,
