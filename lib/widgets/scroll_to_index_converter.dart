@@ -5,37 +5,28 @@ import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 import 'package:pull_down_to_reach/widgets/reachable_item.dart';
 
-class PullToReachList extends StatefulWidget {
+class ScrollToIndexConverter extends StatefulWidget {
   final Widget child;
   final List<ReachableItem> items;
-  final double instructionTextWeight;
-
-  // How much the scroll's drag gesture can overshoot
-  final double overshootLimit;
 
   // The over-scroll distance that moves the info text to its maximum
   // displacement, as a percentage of the scrollable's container extent.
   final double dragExtentPercentage;
 
-  PullToReachList({
+  ScrollToIndexConverter({
     @required this.child,
     @required this.items,
-    this.instructionTextWeight = 2.2,
-    this.overshootLimit = 1.2,
     this.dragExtentPercentage = 0.5,
   });
 
   @override
-  _PullToReachListState createState() => _PullToReachListState();
+  _ScrollToIndexConverterState createState() => _ScrollToIndexConverterState();
 }
 
-class _PullToReachListState extends State<PullToReachList>
+class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     with TickerProviderStateMixin {
-  AnimationController _positionController;
-
   double _dragOffset = 0;
   int _itemIndex = 0;
-
   bool _shouldNotify = false;
 
   IndexCalculator indexCalculator;
@@ -62,12 +53,6 @@ class _PullToReachListState extends State<PullToReachList>
     );
   }
 
-  @override
-  void dispose() {
-    _positionController.dispose();
-    super.dispose();
-  }
-
   // -----
   // Handle notifications
   // -----
@@ -90,7 +75,6 @@ class _PullToReachListState extends State<PullToReachList>
       _updateFocusIndex();
     }
 
-    _positionController.value = progress;
     return false;
   }
 

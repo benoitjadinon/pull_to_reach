@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pull_down_to_reach/widgets/pull_to_reach.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reache_child.dart';
 import 'package:pull_down_to_reach/widgets/reachable_item.dart';
+import 'package:pull_down_to_reach/widgets/scroll_to_index_converter.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return PullToReachScope(
       child: Scaffold(
-        body: PullToReachList(
+        body: ScrollToIndexConverter(
           items: [
             ReachableItem(text: "Pull to reach", weight: 2),
             ReachableItem(text: "Release for settings"),
