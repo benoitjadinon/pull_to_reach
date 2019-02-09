@@ -5,14 +5,14 @@ import 'package:meta/meta.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 
 @immutable
-class PullToReachChild extends StatefulWidget {
+class ReachableChild extends StatefulWidget {
   final Widget child;
   final int index;
 
   final ValueChanged<bool> onFocusChanged;
   final VoidCallback onSelect;
 
-  PullToReachChild({
+  ReachableChild({
     @required this.child,
     @required this.index,
     this.onFocusChanged,
@@ -20,10 +20,10 @@ class PullToReachChild extends StatefulWidget {
   });
 
   @override
-  PullToReachChildState createState() => PullToReachChildState();
+  ReachableChildState createState() => ReachableChildState();
 }
 
-class PullToReachChildState extends State<PullToReachChild> {
+class ReachableChildState extends State<ReachableChild> {
   int _lastFocusIndex = -1;
 
   StreamSubscription<int> _focusSubscription;
