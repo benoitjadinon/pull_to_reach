@@ -15,15 +15,14 @@ class PullToReachScope extends InheritedWidget {
     @required Widget child,
   }) : super(key: key, child: child);
 
-  static PullToReachScope of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(PullToReachScope)
-        as PullToReachScope;
-  }
-
-  @override
-  bool updateShouldNotify(PullToReachScope old) => true;
+  static PullToReachScope of(BuildContext context) =>
+      context.inheritFromWidgetOfExactType(PullToReachScope)
+          as PullToReachScope;
 
   void setFocusIndex(int index) => _focusIndex.add(index);
 
   void setSelectIndex(int index) => _selectIndex.add(index);
+
+  @override
+  bool updateShouldNotify(PullToReachScope old) => true;
 }

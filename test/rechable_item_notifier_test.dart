@@ -1,9 +1,10 @@
-import 'package:pull_down_to_reach/reachable_index_calculator.dart';
+import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
+import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:test_api/test_api.dart';
 
 void main() {
   var createNotifier = () {
-    return ReachableIndexCalculator.withCount(
+    return IndexCalculator.withCount(
       minScrollPosition: 0,
       maxScrollPosition: 4,
       itemCount: 4,
@@ -33,7 +34,7 @@ void main() {
   });
 
   test('twice as much weight results in twice as much range', () {
-    var itemNotifier = ReachableIndexCalculator.withIndices(
+    var itemNotifier = IndexCalculator.withIndices(
       minScrollPosition: 0,
       maxScrollPosition: 7,
       indices: [

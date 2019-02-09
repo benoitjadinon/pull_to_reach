@@ -1,31 +1,21 @@
 import 'package:meta/meta.dart';
-import 'package:pull_down_to_reach/range.dart';
+import 'package:pull_down_to_reach/index_calculator/range.dart';
+import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/util.dart';
 
-@immutable
-class WeightedIndex {
-  final int index;
-  final double weight;
-
-  WeightedIndex({
-    @required this.index,
-    @required this.weight,
-  });
-}
-
-abstract class ReachableIndexCalculator {
+abstract class IndexCalculator {
   int getItemIndexForPosition(double scrollPosition);
 
   // -----
   // Factories
   // -----
 
-  static ReachableIndexCalculator withCount({
+  static IndexCalculator withCount({
     @required double minScrollPosition,
     @required double maxScrollPosition,
     @required int itemCount,
   }) =>
-      _ReachableIndexCalculatorImpl(
+      _IndexCalculatorImpl(
         minScrollPosition,
         maxScrollPosition,
         mapIndex(
@@ -36,26 +26,26 @@ abstract class ReachableIndexCalculator {
                 )),
       );
 
-  static ReachableIndexCalculator withIndices({
+  static IndexCalculator withIndices({
     @required double minScrollPosition,
     @required double maxScrollPosition,
     @required List<WeightedIndex> indices,
   }) =>
-      _ReachableIndexCalculatorImpl(
+      _IndexCalculatorImpl(
         minScrollPosition,
         maxScrollPosition,
         indices,
       );
 }
 
-class _ReachableIndexCalculatorImpl implements ReachableIndexCalculator {
+class _IndexCalculatorImpl implements IndexCalculator {
   final double minScrollPosition;
   final double maxScrollPosition;
 
   final List<WeightedIndex> indices;
   List<Range> _ranges;
 
-  _ReachableIndexCalculatorImpl(
+  _IndexCalculatorImpl(
       this.minScrollPosition, this.maxScrollPosition, this.indices) {
     _ranges = _createRanges(indices, minScrollPosition, maxScrollPosition);
   }

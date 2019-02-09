@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:pull_down_to_reach/pull_to_reach_scope.dart';
+import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 
 @immutable
-class ReachNotificationReceiver extends StatefulWidget {
+class PullToReachChild extends StatefulWidget {
   final Widget child;
   final int index;
 
   final ValueChanged<bool> onFocusChanged;
   final VoidCallback onSelect;
 
-  ReachNotificationReceiver({
+  PullToReachChild({
     @required this.child,
     @required this.index,
     this.onFocusChanged,
@@ -20,11 +20,10 @@ class ReachNotificationReceiver extends StatefulWidget {
   });
 
   @override
-  ReachNotificationReceiverState createState() =>
-      ReachNotificationReceiverState();
+  PullToReachChildState createState() => PullToReachChildState();
 }
 
-class ReachNotificationReceiverState extends State<ReachNotificationReceiver> {
+class PullToReachChildState extends State<PullToReachChild> {
   int _lastFocusIndex = -1;
 
   StreamSubscription<int> _focusSubscription;
