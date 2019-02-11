@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
 
 class PullToReachScope extends InheritedWidget {
-  Stream<int> get focusIndex => _focusIndex.stream;
+  Stream<IndexCalculation> get focusIndex => _focusIndex.stream;
 
-  Stream<int> get selectIndex => _selectIndex.stream;
+  Stream<IndexCalculation> get selectIndex => _selectIndex.stream;
 
-  final StreamController<int> _focusIndex = StreamController.broadcast();
-  final StreamController<int> _selectIndex = StreamController.broadcast();
+  final StreamController<IndexCalculation> _focusIndex =
+  StreamController.broadcast();
+
+  final StreamController<IndexCalculation> _selectIndex =
+  StreamController.broadcast();
 
   PullToReachScope({
     Key key,
@@ -19,9 +23,9 @@ class PullToReachScope extends InheritedWidget {
       context.inheritFromWidgetOfExactType(PullToReachScope)
           as PullToReachScope;
 
-  void setFocusIndex(int index) => _focusIndex.add(index);
+  void setFocusIndex(IndexCalculation index) => _focusIndex.add(index);
 
-  void setSelectIndex(int index) => _selectIndex.add(index);
+  void setSelectIndex(IndexCalculation index) => _selectIndex.add(index);
 
   @override
   bool updateShouldNotify(PullToReachScope old) => true;

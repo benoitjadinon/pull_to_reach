@@ -2,32 +2,35 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 
 @immutable
-class ReachableChild extends StatefulWidget {
+class ReachableWidget extends StatefulWidget {
   final Widget child;
   final int index;
 
   final ValueChanged<bool> onFocusChanged;
   final VoidCallback onSelect;
+  final ValueChanged<double> onOverallPercentChanged;
 
-  ReachableChild({
+  ReachableWidget({
     @required this.child,
     @required this.index,
     this.onFocusChanged,
     this.onSelect,
+    this.onOverallPercentChanged,
   });
 
   @override
-  ReachableChildState createState() => ReachableChildState();
+  ReachableWidgetState createState() => ReachableWidgetState();
 }
 
-class ReachableChildState extends State<ReachableChild> {
+class ReachableWidgetState extends State<ReachableWidget> {
   int _lastFocusIndex = -1;
 
-  StreamSubscription<int> _focusSubscription;
-  StreamSubscription<int> _selectionSubscription;
+  StreamSubscription<IndexCalculation> _focusSubscription;
+  StreamSubscription<IndexCalculation> _selectionSubscription;
 
   @override
   void didChangeDependencies() {
@@ -56,7 +59,10 @@ class ReachableChildState extends State<ReachableChild> {
   // Handle Notifications
   // -----
 
-  void _onFocusChanged(int newIndex) {
+  void _onFocusChanged(IndexCalculation indexCalculation) {
+    _updatePercent(indexCalculation.overallPercent);
+
+    var newIndex = indexCalculation.index;
     var ownIndex = widget.index;
 
     if (widget.onFocusChanged == null) return;
@@ -75,12 +81,20 @@ class ReachableChildState extends State<ReachableChild> {
     _lastFocusIndex = newIndex;
   }
 
-  void _onSelectionChanged(int newIndex) {
+  void _onSelectionChanged(IndexCalculation indexCalculation) {
+    _updatePercent(indexCalculation.overallPercent);
+
+    var newIndex = indexCalculation.index;
     var ownIndex = widget.index;
 
     if (widget.onSelect == null) return;
     if (newIndex == ownIndex && widget.onSelect != null) {
       widget.onSelect();
     }
+  }
+
+  void _updatePercent(double overallPercent) {
+    if (widget.onOverallPercentChanged == null) return;
+    widget.onOverallPercentChanged(overallPercent);
   }
 }

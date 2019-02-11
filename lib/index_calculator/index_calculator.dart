@@ -3,8 +3,35 @@ import 'package:pull_down_to_reach/index_calculator/range.dart';
 import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/util.dart';
 
+@immutable
+class IndexCalculation {
+  final int index;
+
+  final double overallPercent;
+  final double percentToNextIndex;
+
+  IndexCalculation(this.index,
+      this.overallPercent,
+      this.percentToNextIndex,);
+
+  factory IndexCalculation.empty() => IndexCalculation(0, 0, 0);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is IndexCalculation &&
+              runtimeType == other.runtimeType &&
+              index == other.index &&
+              overallPercent == other.overallPercent &&
+              percentToNextIndex == other.percentToNextIndex;
+
+  @override
+  int get hashCode =>
+      index.hashCode ^ overallPercent.hashCode ^ percentToNextIndex.hashCode;
+}
+
 abstract class IndexCalculator {
-  int getIndexForScrollPercent(double scrollPercent);
+  IndexCalculation getIndexForScrollPercent(double scrollPercent);
 
   // -----
   // Factories
@@ -35,13 +62,14 @@ class _IndexCalculatorImpl implements IndexCalculator {
   }
 
   @override
-  int getIndexForScrollPercent(double scrollPercent) {
+  IndexCalculation getIndexForScrollPercent(double scrollPercent) {
     var range = _ranges.firstWhere(
       (range) => range.isInRange(scrollPercent),
       orElse: () => null,
     );
 
-    return range?.index ?? -1;
+    var index = range?.index ?? -1;
+    return IndexCalculation(index, scrollPercent, 0);
   }
 
   List<Range> _createRanges(

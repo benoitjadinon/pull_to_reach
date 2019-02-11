@@ -23,9 +23,10 @@ class ScrollToIndexConverter extends StatefulWidget {
 class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     with TickerProviderStateMixin {
   double _dragOffset = 0;
-  int _itemIndex = 0;
+  IndexCalculation _currentIndex = IndexCalculation.empty();
   bool _shouldNotify = false;
 
+  //TODO add index calculator to ScrollToIndexConverter
   IndexCalculator indexCalculator;
 
   @override
@@ -62,11 +63,8 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     var progress = _calculateScrollProgress(notification);
     var index = indexCalculator.getIndexForScrollPercent(progress);
 
-    print(progress);
-    print(index);
-
-    if (_itemIndex != index) {
-      setState(() => _itemIndex = index);
+    if (_currentIndex != index) {
+      _currentIndex = index;
       _updateFocusIndex();
     }
 
@@ -129,10 +127,10 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
   // -----
 
   void _updateSelectIndex() {
-    PullToReachScope.of(context).setSelectIndex(_itemIndex);
+    PullToReachScope.of(context).setSelectIndex(_currentIndex);
   }
 
   void _updateFocusIndex() {
-    PullToReachScope.of(context).setFocusIndex(_itemIndex);
+    PullToReachScope.of(context).setFocusIndex(_currentIndex);
   }
 }
