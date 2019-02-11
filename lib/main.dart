@@ -119,8 +119,7 @@ class _InstructionTextState extends State<InstructionText> {
               padding: EdgeInsets.all(16),
               child: Text(
                 "Pull down!",
-                style: Theme
-                    .of(context)
+                style: Theme.of(context)
                     .primaryTextTheme
                     .title
                     .copyWith(color: Colors.black45),

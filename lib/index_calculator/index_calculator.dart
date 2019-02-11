@@ -10,20 +10,22 @@ class IndexCalculation {
   final double overallPercent;
   final double percentToNextIndex;
 
-  IndexCalculation(this.index,
-      this.overallPercent,
-      this.percentToNextIndex,);
+  IndexCalculation(
+    this.index,
+    this.overallPercent,
+    this.percentToNextIndex,
+  );
 
   factory IndexCalculation.empty() => IndexCalculation(0, 0, 0);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is IndexCalculation &&
-              runtimeType == other.runtimeType &&
-              index == other.index &&
-              overallPercent == other.overallPercent &&
-              percentToNextIndex == other.percentToNextIndex;
+      other is IndexCalculation &&
+          runtimeType == other.runtimeType &&
+          index == other.index &&
+          overallPercent == other.overallPercent &&
+          percentToNextIndex == other.percentToNextIndex;
 
   @override
   int get hashCode =>

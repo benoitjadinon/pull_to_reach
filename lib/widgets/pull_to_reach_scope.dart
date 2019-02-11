@@ -9,10 +9,10 @@ class PullToReachScope extends InheritedWidget {
   Stream<IndexCalculation> get selectIndex => _selectIndex.stream;
 
   final StreamController<IndexCalculation> _focusIndex =
-  StreamController.broadcast();
+      StreamController.broadcast();
 
   final StreamController<IndexCalculation> _selectIndex =
-  StreamController.broadcast();
+      StreamController.broadcast();
 
   PullToReachScope({
     Key key,
