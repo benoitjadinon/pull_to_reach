@@ -5,10 +5,12 @@ import 'package:meta/meta.dart';
 import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 
+typedef bool IndexPredicate(int index);
+
 @immutable
 class ReachableWidget extends StatefulWidget {
   final Widget child;
-  final int index;
+  final IndexPredicate indexPredicate;
 
   final ValueChanged<bool> onFocusChanged;
   final VoidCallback onSelect;
@@ -16,7 +18,7 @@ class ReachableWidget extends StatefulWidget {
 
   ReachableWidget({
     @required this.child,
-    @required this.index,
+    @required this.indexPredicate,
     this.onFocusChanged,
     this.onSelect,
     this.onOverallPercentChanged,
@@ -27,31 +29,38 @@ class ReachableWidget extends StatefulWidget {
 }
 
 class ReachableWidgetState extends State<ReachableWidget> {
-  int _lastFocusIndex = -1;
-
   StreamSubscription<IndexCalculation> _focusSubscription;
   StreamSubscription<IndexCalculation> _selectionSubscription;
-
-  @override
-  void didChangeDependencies() {
-    _focusSubscription?.cancel();
-    _selectionSubscription?.cancel();
-
-    _focusSubscription =
-        PullToReachScope.of(context).focusIndex.listen(_onFocusChanged);
-
-    _selectionSubscription =
-        PullToReachScope.of(context).selectIndex.listen(_onSelectionChanged);
-    super.didChangeDependencies();
-  }
+  StreamSubscription<double> _dragPercentSubscription;
 
   @override
   Widget build(BuildContext context) => widget.child;
 
   @override
+  void didChangeDependencies() {
+    _focusSubscription?.cancel();
+    _selectionSubscription?.cancel();
+    _dragPercentSubscription?.cancel();
+
+    var pullToReachScope = PullToReachScope.of(context);
+
+    _focusSubscription = pullToReachScope.focusIndex.listen(_onFocusChanged);
+
+    _selectionSubscription =
+        pullToReachScope.selectIndex.listen(_onSelectionChanged);
+
+    _dragPercentSubscription =
+        pullToReachScope.dragPercent.listen(_updateDragPercent);
+
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _focusSubscription?.cancel();
     _selectionSubscription?.cancel();
+    _dragPercentSubscription?.cancel();
+
     super.dispose();
   }
 
@@ -59,42 +68,18 @@ class ReachableWidgetState extends State<ReachableWidget> {
   // Handle Notifications
   // -----
 
-  void _onFocusChanged(IndexCalculation indexCalculation) {
-    _updatePercent(indexCalculation.overallPercent);
-
-    var newIndex = indexCalculation.index;
-    var ownIndex = widget.index;
-
+  void _onFocusChanged(IndexCalculation newIndex) {
     if (widget.onFocusChanged == null) return;
-
-    var isNowFocused = newIndex == ownIndex;
-    var wasFocused = _lastFocusIndex == ownIndex;
-
-    if (!wasFocused && isNowFocused) {
-      widget.onFocusChanged(true);
-    }
-
-    if (wasFocused && !isNowFocused) {
-      widget.onFocusChanged(false);
-    }
-
-    _lastFocusIndex = newIndex;
+    widget.onFocusChanged(widget.indexPredicate(newIndex.index));
   }
 
-  void _onSelectionChanged(IndexCalculation indexCalculation) {
-    _updatePercent(indexCalculation.overallPercent);
-
-    var newIndex = indexCalculation.index;
-    var ownIndex = widget.index;
-
+  void _onSelectionChanged(IndexCalculation newIndex) {
     if (widget.onSelect == null) return;
-    if (newIndex == ownIndex && widget.onSelect != null) {
-      widget.onSelect();
-    }
+    if (widget.indexPredicate(newIndex.index)) widget.onSelect();
   }
 
-  void _updatePercent(double overallPercent) {
+  void _updateDragPercent(double percent) {
     if (widget.onOverallPercentChanged == null) return;
-    widget.onOverallPercentChanged(overallPercent);
+    widget.onOverallPercentChanged(percent);
   }
 }

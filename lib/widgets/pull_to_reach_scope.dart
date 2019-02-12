@@ -8,11 +8,15 @@ class PullToReachScope extends InheritedWidget {
 
   Stream<IndexCalculation> get selectIndex => _selectIndex.stream;
 
+  Stream<double> get dragPercent => _dragPercent.stream;
+
   final StreamController<IndexCalculation> _focusIndex =
       StreamController.broadcast();
 
   final StreamController<IndexCalculation> _selectIndex =
       StreamController.broadcast();
+
+  final StreamController<double> _dragPercent = StreamController.broadcast();
 
   PullToReachScope({
     Key key,
@@ -26,6 +30,8 @@ class PullToReachScope extends InheritedWidget {
   void setFocusIndex(IndexCalculation index) => _focusIndex.add(index);
 
   void setSelectIndex(IndexCalculation index) => _selectIndex.add(index);
+
+  void setDragPercent(double percent) => _dragPercent.add(percent);
 
   @override
   bool updateShouldNotify(PullToReachScope old) => true;

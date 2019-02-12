@@ -24,7 +24,9 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     with TickerProviderStateMixin {
   double _dragOffset = 0;
   IndexCalculation _currentIndex = IndexCalculation.empty();
-  bool _shouldNotify = false;
+
+  bool _pullToReachStarted = false;
+  bool _shouldNotifyOnDragEnd = false;
 
   //TODO add index calculator to ScrollToIndexConverter
   IndexCalculator indexCalculator;
@@ -51,21 +53,40 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
   // -----
 
   bool _handleScrollNotification(ScrollNotification notification) {
+    if (_didDragStart(notification)) {
+      _dragOffset = 0;
+      _pullToReachStarted = true;
+    }
+
     if (_didDragEnd(notification)) {
-      if (_shouldNotify) {
-        _updateSelectIndex();
-        _shouldNotify = false;
-      }
+      _dragOffset = 0;
+      _pullToReachStarted = false;
+
+      _notifySelectIfNeeded();
+    }
+
+    if (_pullToReachStarted) {
+      _shouldNotifyOnDragEnd = true;
     } else {
-      _shouldNotify = true;
+      return false;
     }
 
     var progress = _calculateScrollProgress(notification);
     var index = indexCalculator.getIndexForScrollPercent(progress);
+    _updateScrollPercent(progress);
 
     if (_currentIndex != index) {
       _currentIndex = index;
       _updateFocusIndex();
+    }
+
+    return false;
+  }
+
+  bool _didDragStart(ScrollNotification notification) {
+    if (notification is ScrollStartNotification &&
+        notification.metrics.extentBefore == 0) {
+      return true;
     }
 
     return false;
@@ -126,11 +147,21 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
   // PullToReachScope updates
   // -----
 
-  void _updateSelectIndex() {
-    PullToReachScope.of(context).setSelectIndex(_currentIndex);
+  void _notifySelectIfNeeded() {
+    if (_shouldNotifyOnDragEnd) {
+      PullToReachScope.of(context).setSelectIndex(_currentIndex);
+      PullToReachScope.of(context).setDragPercent(0);
+      PullToReachScope.of(context).setFocusIndex(IndexCalculation.empty());
+
+      _shouldNotifyOnDragEnd = false;
+    }
   }
 
   void _updateFocusIndex() {
     PullToReachScope.of(context).setFocusIndex(_currentIndex);
+  }
+
+  void _updateScrollPercent(double percent) {
+    PullToReachScope.of(context).setDragPercent(percent);
   }
 }

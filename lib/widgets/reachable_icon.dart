@@ -35,7 +35,7 @@ class _ReachableIconState extends State<ReachableIcon>
     _iconScaleAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ).drive(Tween(begin: 1, end: 1.2));
+    ).drive(Tween(begin: 1, end: 1.5));
 
     super.initState();
   }
@@ -43,7 +43,7 @@ class _ReachableIconState extends State<ReachableIcon>
   @override
   Widget build(BuildContext context) {
     return ReachableWidget(
-      index: widget.index,
+      indexPredicate: (index) => index == widget.index,
       onSelect: widget.onSelect,
       onFocusChanged: (isFocused) {
         if (isFocused) {

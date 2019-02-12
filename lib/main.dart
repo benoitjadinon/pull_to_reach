@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
 import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
 import 'package:pull_down_to_reach/widgets/reachable_icon.dart';
@@ -54,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
             WeightedIndex(index: 0, weight: 1.5),
             WeightedIndex(index: 1),
             WeightedIndex(index: 2),
-            WeightedIndex(index: 3),
           ],
           child: Stack(
             children: [
@@ -69,7 +69,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }),
               Align(
-                child: InstructionText(),
+                child: InstructionText(
+                  instructionText: [
+                    "Pull down to reach!",
+                    "Release for settings",
+                    "Release for search",
+                  ],
+                ),
                 alignment: Alignment.topCenter,
               )
             ],
@@ -96,17 +102,22 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class InstructionText extends StatefulWidget {
+  final List<String> instructionText;
+
+  InstructionText({@required this.instructionText});
+
   @override
   _InstructionTextState createState() => _InstructionTextState();
 }
 
 class _InstructionTextState extends State<InstructionText> {
+  String _text = "Pull Down";
   double _percent = 0;
 
   @override
   Widget build(BuildContext context) {
     return ReachableWidget(
-      index: 0,
+      indexPredicate: (index) => true,
       onOverallPercentChanged: (percent) => setState(() => _percent = percent),
       child: AnimatedOpacity(
         duration: Duration(milliseconds: 200),
@@ -117,17 +128,28 @@ class _InstructionTextState extends State<InstructionText> {
             elevation: 12,
             child: Container(
               padding: EdgeInsets.all(16),
-              child: Text(
-                "Pull down!",
-                style: Theme.of(context)
-                    .primaryTextTheme
-                    .title
-                    .copyWith(color: Colors.black45),
-              ),
+              child: StreamBuilder<String>(
+                  stream: PullToReachScope.of(context)
+                      .focusIndex
+                      .map(_stringForIndex),
+                  builder: (context, snapshot) {
+                    var string = snapshot.data ?? "Pull down!";
+                    return Text(
+                      string,
+                      style: Theme.of(context)
+                          .primaryTextTheme
+                          .title
+                          .copyWith(color: Colors.black45),
+                    );
+                  }),
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _stringForIndex(IndexCalculation event) {
+    return widget.instructionText[event.index];
   }
 }

@@ -6,17 +6,14 @@ import 'package:pull_down_to_reach/util.dart';
 @immutable
 class IndexCalculation {
   final int index;
-
-  final double overallPercent;
   final double percentToNextIndex;
 
   IndexCalculation(
     this.index,
-    this.overallPercent,
     this.percentToNextIndex,
   );
 
-  factory IndexCalculation.empty() => IndexCalculation(0, 0, 0);
+  factory IndexCalculation.empty() => IndexCalculation(-1, 0);
 
   @override
   bool operator ==(Object other) =>
@@ -24,12 +21,10 @@ class IndexCalculation {
       other is IndexCalculation &&
           runtimeType == other.runtimeType &&
           index == other.index &&
-          overallPercent == other.overallPercent &&
           percentToNextIndex == other.percentToNextIndex;
 
   @override
-  int get hashCode =>
-      index.hashCode ^ overallPercent.hashCode ^ percentToNextIndex.hashCode;
+  int get hashCode => index.hashCode ^ percentToNextIndex.hashCode;
 }
 
 abstract class IndexCalculator {
@@ -71,7 +66,7 @@ class _IndexCalculatorImpl implements IndexCalculator {
     );
 
     var index = range?.index ?? -1;
-    return IndexCalculation(index, scrollPercent, 0);
+    return IndexCalculation(index, 0); //TODO
   }
 
   List<Range> _createRanges(
