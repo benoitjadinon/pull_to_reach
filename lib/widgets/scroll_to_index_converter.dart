@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
-import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
-import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
+import 'package:pull_to_reach/index_calculator/index_calculator.dart';
+import 'package:pull_to_reach/index_calculator/weighted_index.dart';
+import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
 
 class ScrollToIndexConverter extends StatefulWidget {
   final Widget child;

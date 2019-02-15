@@ -1,6 +1,6 @@
-import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
-import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
-import 'package:pull_down_to_reach/util.dart';
+import 'package:pull_to_reach/index_calculator/index_calculator.dart';
+import 'package:pull_to_reach/index_calculator/weighted_index.dart';
+import 'package:pull_to_reach/util.dart';
 import 'package:test_api/test_api.dart';
 
 void main() {
@@ -14,25 +14,25 @@ void main() {
   };
 
   test('negative value returns first index', () {
-    expect(createNotifier().getIndexForScrollPercent(-1.2), 0);
+    expect(createNotifier().getIndexForScrollPercent(-1.2).index, 0);
   });
 
   test('bigger value always returns last index', () {
-    expect(createNotifier().getIndexForScrollPercent(5), 3);
+    expect(createNotifier().getIndexForScrollPercent(5).index, 3);
   });
 
   test('value in range returns correct index', () {
-    expect(createNotifier().getIndexForScrollPercent(0.1), 0);
-    expect(createNotifier().getIndexForScrollPercent(0.9), 0);
+    expect(createNotifier().getIndexForScrollPercent(0.1).index, 0);
+    expect(createNotifier().getIndexForScrollPercent(0.9).index, 0);
 
-    expect(createNotifier().getIndexForScrollPercent(1.1), 1);
-    expect(createNotifier().getIndexForScrollPercent(1.9), 1);
+    expect(createNotifier().getIndexForScrollPercent(1.1).index, 1);
+    expect(createNotifier().getIndexForScrollPercent(1.9).index, 1);
 
-    expect(createNotifier().getIndexForScrollPercent(2.1), 2);
-    expect(createNotifier().getIndexForScrollPercent(2.9), 2);
+    expect(createNotifier().getIndexForScrollPercent(2.1).index, 2);
+    expect(createNotifier().getIndexForScrollPercent(2.9).index, 2);
 
-    expect(createNotifier().getIndexForScrollPercent(3.1), 3);
-    expect(createNotifier().getIndexForScrollPercent(3.9), 3);
+    expect(createNotifier().getIndexForScrollPercent(3.1).index, 3);
+    expect(createNotifier().getIndexForScrollPercent(3.9).index, 3);
   });
 
   test('twice as much weight results in twice as much range', () {
@@ -50,6 +50,6 @@ void main() {
       ],
     );
 
-    expect(itemNotifier.getIndexForScrollPercent(5), 4);
+    expect(itemNotifier.getIndexForScrollPercent(5).index, 4);
   });
 }

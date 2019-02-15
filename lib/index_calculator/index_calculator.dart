@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
-import 'package:pull_down_to_reach/index_calculator/range.dart';
-import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
-import 'package:pull_down_to_reach/util.dart';
+import 'package:pull_to_reach/index_calculator/range.dart';
+import 'package:pull_to_reach/index_calculator/weighted_index.dart';
+import 'package:pull_to_reach/util.dart';
 
 @immutable
 class IndexCalculation {

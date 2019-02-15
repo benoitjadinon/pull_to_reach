@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
-import 'package:pull_down_to_reach/index_calculator/weighted_index.dart';
-import 'package:pull_down_to_reach/widgets/pull_to_reach_scope.dart';
-import 'package:pull_down_to_reach/widgets/reachable_icon.dart';
-import 'package:pull_down_to_reach/widgets/reachable_widget.dart';
-import 'package:pull_down_to_reach/widgets/scroll_to_index_converter.dart';
+import 'package:pull_to_reach/index_calculator/index_calculator.dart';
+import 'package:pull_to_reach/index_calculator/weighted_index.dart';
+import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
+import 'package:pull_to_reach/widgets/reachable_icon.dart';
+import 'package:pull_to_reach/widgets/reachable_widget.dart';
+import 'package:pull_to_reach/widgets/scroll_to_index_converter.dart';
 
 void main() => runApp(MyApp());
 
@@ -111,7 +111,6 @@ class InstructionText extends StatefulWidget {
 }
 
 class _InstructionTextState extends State<InstructionText> {
-  String _text = "Pull Down";
   double _percent = 0;
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pull_down_to_reach/widgets/reachable_widget.dart';
+import 'package:pull_to_reach/widgets/reachable_widget.dart';
 
 class ReachableIcon extends StatefulWidget {
   final Widget child;
