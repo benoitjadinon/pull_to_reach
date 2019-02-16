@@ -8,7 +8,7 @@ import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
 typedef bool IndexPredicate(int index);
 
 @immutable
-class ReachableWidget extends StatefulWidget {
+class Reachable extends StatefulWidget {
   final Widget child;
   final IndexPredicate indexPredicate;
 
@@ -16,7 +16,7 @@ class ReachableWidget extends StatefulWidget {
   final VoidCallback onSelect;
   final ValueChanged<double> onOverallPercentChanged;
 
-  ReachableWidget({
+  Reachable({
     @required this.child,
     @required this.indexPredicate,
     this.onFocusChanged,
@@ -25,10 +25,10 @@ class ReachableWidget extends StatefulWidget {
   });
 
   @override
-  ReachableWidgetState createState() => ReachableWidgetState();
+  ReachableState createState() => ReachableState();
 }
 
-class ReachableWidgetState extends State<ReachableWidget> {
+class ReachableState extends State<Reachable> {
   StreamSubscription<IndexCalculation> _focusSubscription;
   StreamSubscription<IndexCalculation> _selectionSubscription;
   StreamSubscription<double> _dragPercentSubscription;

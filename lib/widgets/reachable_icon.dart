@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pull_to_reach/widgets/reachable_widget.dart';
+import 'package:pull_to_reach/widgets/reachable.dart';
 
 class ReachableIcon extends StatefulWidget {
-  final Widget child;
+  final Widget icon;
   final int index;
   final double size;
   final VoidCallback onSelect;
   final Duration duration;
 
   ReachableIcon(
-      {@required this.child,
+      {@required this.icon,
       @required this.index,
       this.size = 24,
       @required this.onSelect,
@@ -42,7 +42,7 @@ class _ReachableIconState extends State<ReachableIcon>
 
   @override
   Widget build(BuildContext context) {
-    return ReachableWidget(
+    return Reachable(
       indexPredicate: (index) => index == widget.index,
       onSelect: widget.onSelect,
       onFocusChanged: (isFocused) {
@@ -56,7 +56,7 @@ class _ReachableIconState extends State<ReachableIcon>
         animation: _animationController,
         builder: (context, _) {
           return IconButton(
-            icon: widget.child,
+            icon: widget.icon,
             onPressed: widget.onSelect,
             iconSize: _iconScaleAnimation.value * widget.size,
           );

@@ -6,25 +6,23 @@ import 'package:pull_to_reach/util.dart';
 @immutable
 class IndexCalculation {
   final int index;
-  final double percentToNextIndex;
 
-  IndexCalculation(
-    this.index,
-    this.percentToNextIndex,
-  );
+  //final double percentToNextIndex;
 
-  factory IndexCalculation.empty() => IndexCalculation(-1, 0);
+  //TODO implement percentToNextIndex
+  IndexCalculation(this.index);
+
+  factory IndexCalculation.empty() => IndexCalculation(-1);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is IndexCalculation &&
           runtimeType == other.runtimeType &&
-          index == other.index &&
-          percentToNextIndex == other.percentToNextIndex;
+          index == other.index;
 
   @override
-  int get hashCode => index.hashCode ^ percentToNextIndex.hashCode;
+  int get hashCode => index.hashCode;
 }
 
 abstract class IndexCalculator {
@@ -66,7 +64,7 @@ class _IndexCalculatorImpl implements IndexCalculator {
     );
 
     var index = range?.index ?? -1;
-    return IndexCalculation(index, 0); //TODO
+    return IndexCalculation(index);
   }
 
   List<Range> _createRanges(
@@ -102,8 +100,6 @@ class _IndexCalculatorImpl implements IndexCalculator {
         end = previousEnd + rangeSize;
       }
 
-      print(
-          "${currentIndex.index}: from: $start to: $end. diff: ${end - start}");
       ranges.add(
         Range(currentIndex.index, start, end),
       );
