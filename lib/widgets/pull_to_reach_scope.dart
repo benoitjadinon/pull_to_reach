@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pull_down_to_reach/index_calculator/index_calculator.dart';
+import 'package:pull_to_reach/index_calculator/index_calculator.dart';
 
 class PullToReachScope extends InheritedWidget {
   Stream<IndexCalculation> get focusIndex => _focusIndex.stream;

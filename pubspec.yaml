@@ -1,21 +1,18 @@
-name: pull_down_to_reach
-description: A new Flutter project.
-
-version: 1.0.0+1
+name: pull_to_reach
+description: Pull to reach implemention for TiO
+version: 0.0.1
+author: Julian Bissekkou
+homepage:
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^0.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 flutter:
-  uses-material-design: true
-
