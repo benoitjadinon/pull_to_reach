@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
 
-typedef bool IndexPredicate(int index);
-
 @immutable
 class Reachable extends StatefulWidget {
   final Widget child;
-  final IndexPredicate indexPredicate;
+  final int index;
 
   final ValueChanged<bool> onFocusChanged;
   final VoidCallback onSelect;
@@ -17,7 +15,7 @@ class Reachable extends StatefulWidget {
 
   Reachable({
     @required this.child,
-    @required this.indexPredicate,
+    @required this.index,
     this.onFocusChanged,
     this.onSelect,
     this.onOverallPercentChanged,
@@ -69,12 +67,12 @@ class ReachableState extends State<Reachable> {
 
   void _onFocusChanged(int newIndex) {
     if (widget.onFocusChanged == null) return;
-    widget.onFocusChanged(widget.indexPredicate(newIndex));
+    widget.onFocusChanged(widget.index == newIndex);
   }
 
   void _onSelectionChanged(int newIndex) {
     if (widget.onSelect == null) return;
-    if (widget.indexPredicate(newIndex)) widget.onSelect();
+    if (widget.index == newIndex) widget.onSelect();
   }
 
   void _updateDragPercent(double percent) {

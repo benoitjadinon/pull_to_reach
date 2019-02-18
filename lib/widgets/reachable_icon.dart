@@ -43,7 +43,7 @@ class _ReachableIconState extends State<ReachableIcon>
   @override
   Widget build(BuildContext context) {
     return Reachable(
-      indexPredicate: (index) => index == widget.index,
+      index: widget.index,
       onSelect: widget.onSelect,
       onFocusChanged: (isFocused) {
         if (isFocused) {
