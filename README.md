@@ -1,14 +1,18 @@
 # Pull-To-Reach
 
 Pull to reach is utilizing the pull gesture to overcome the problem of accessing the non-reachable controls of an app by highlighting them and triggering them once you release your thumb!
-
+This Library consumes `ScrollNotifications` and therefore only works with a Scrollable e.g. `ListView`.  
 
 
 ## Usage
 
+1. Wrap your Page in a `PullToReachContext`
+2. Wrap your ListView (or any other Scrollable) in a `ScrollToIndexConverter`
+3. Use  a`Reachble` and react to focus and select events!
+ 
 ```dart
-PullToReachContext(
-        child: Scaffold(
+  PullToReachContext(
+      child: Scaffold(
       appBar: AppBar(
         actions: [
           ReachableIcon(
@@ -40,7 +44,7 @@ PullToReachContext(
 
 Feedback can be configured using `HapticReachableFeedback`
 
-```
+```dart
 // Optionally, vibration can be triggerd for specific indices.
 final ReachableFeedback feedback = HapticReachableFeedback(
       shouldVibrateOnFocus: (index) => index > 0,
@@ -52,7 +56,6 @@ final ReachableFeedback feedback = HapticReachableFeedback(
         onSelectChanged: feedback.onSelect,
         child: yourChild,
      );
-
 ```
 
 
