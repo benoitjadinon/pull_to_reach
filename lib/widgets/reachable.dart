@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:pull_to_reach/index_calculator/index_calculator.dart';
 import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
 
 typedef bool IndexPredicate(int index);
@@ -29,8 +28,8 @@ class Reachable extends StatefulWidget {
 }
 
 class ReachableState extends State<Reachable> {
-  StreamSubscription<IndexCalculation> _focusSubscription;
-  StreamSubscription<IndexCalculation> _selectionSubscription;
+  StreamSubscription<int> _focusSubscription;
+  StreamSubscription<int> _selectionSubscription;
   StreamSubscription<double> _dragPercentSubscription;
 
   @override
@@ -42,15 +41,15 @@ class ReachableState extends State<Reachable> {
     _selectionSubscription?.cancel();
     _dragPercentSubscription?.cancel();
 
-    var pullToReachScope = PullToReachScope.of(context);
+    var pullToReachContext = PullToReachContext.of(context);
 
-    _focusSubscription = pullToReachScope.focusIndex.listen(_onFocusChanged);
+    _focusSubscription = pullToReachContext.focusIndex.listen(_onFocusChanged);
 
     _selectionSubscription =
-        pullToReachScope.selectIndex.listen(_onSelectionChanged);
+        pullToReachContext.selectIndex.listen(_onSelectionChanged);
 
     _dragPercentSubscription =
-        pullToReachScope.dragPercent.listen(_updateDragPercent);
+        pullToReachContext.dragPercent.listen(_updateDragPercent);
 
     super.didChangeDependencies();
   }
@@ -68,14 +67,14 @@ class ReachableState extends State<Reachable> {
   // Handle Notifications
   // -----
 
-  void _onFocusChanged(IndexCalculation newIndex) {
+  void _onFocusChanged(int newIndex) {
     if (widget.onFocusChanged == null) return;
-    widget.onFocusChanged(widget.indexPredicate(newIndex.index));
+    widget.onFocusChanged(widget.indexPredicate(newIndex));
   }
 
-  void _onSelectionChanged(IndexCalculation newIndex) {
+  void _onSelectionChanged(int newIndex) {
     if (widget.onSelect == null) return;
-    if (widget.indexPredicate(newIndex.index)) widget.onSelect();
+    if (widget.indexPredicate(newIndex)) widget.onSelect();
   }
 
   void _updateDragPercent(double percent) {

@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pull_to_reach/index_calculator/index_calculator.dart';
-import 'package:pull_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_to_reach/widgets/pull_to_reach_scope.dart';
 
 class ScrollToIndexConverter extends StatefulWidget {
   final Widget child;
-  final List<WeightedIndex> items;
-
   final double dragExtentPercentage;
 
   ScrollToIndexConverter({
     @required this.child,
-    @required this.items,
-    this.dragExtentPercentage = 0.5,
+    this.dragExtentPercentage = 0.2,
   });
 
   @override
@@ -23,18 +19,19 @@ class ScrollToIndexConverter extends StatefulWidget {
 class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     with TickerProviderStateMixin {
   double _dragOffset = 0;
-  IndexCalculation _currentIndex = IndexCalculation.empty();
+  int _currentIndex = -1;
 
   bool _pullToReachStarted = false;
   bool _shouldNotifyOnDragEnd = false;
-
-  //TODO add index calculator to ScrollToIndexConverter
-  IndexCalculator indexCalculator;
+  IndexCalculator _indexCalculator;
 
   @override
-  void initState() {
-    indexCalculator = IndexCalculator(indices: widget.items);
-    super.initState();
+  void didChangeDependencies() {
+    _indexCalculator = IndexCalculator(
+      indices: PullToReachContext.of(context).indices,
+    );
+
+    super.didChangeDependencies();
   }
 
   @override
@@ -72,7 +69,7 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     }
 
     var progress = _calculateScrollProgress(notification);
-    var index = indexCalculator.getIndexForScrollPercent(progress);
+    var index = _indexCalculator.getIndexForScrollPercent(progress).index;
     _updateScrollPercent(progress);
 
     if (_currentIndex != index) {
@@ -123,11 +120,11 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     }
 
     if (notification is ScrollUpdateNotification) {
-      _dragOffset -= notification.scrollDelta / 0.8;
+      _dragOffset -= notification.scrollDelta;
     }
 
     if (notification is OverscrollNotification) {
-      _dragOffset -= notification.overscroll / 0.8;
+      _dragOffset -= notification.overscroll;
     }
 
     var newValue =
@@ -149,19 +146,19 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
 
   void _notifySelectIfNeeded() {
     if (_shouldNotifyOnDragEnd) {
-      PullToReachScope.of(context).setSelectIndex(_currentIndex);
-      PullToReachScope.of(context).setDragPercent(0);
-      PullToReachScope.of(context).setFocusIndex(IndexCalculation.empty());
+      PullToReachContext.of(context).setSelectIndex(_currentIndex);
+      PullToReachContext.of(context).setDragPercent(0);
+      PullToReachContext.of(context).setFocusIndex(-1);
 
       _shouldNotifyOnDragEnd = false;
     }
   }
 
   void _updateFocusIndex() {
-    PullToReachScope.of(context).setFocusIndex(_currentIndex);
+    PullToReachContext.of(context).setFocusIndex(_currentIndex);
   }
 
   void _updateScrollPercent(double percent) {
-    PullToReachScope.of(context).setDragPercent(percent);
+    PullToReachContext.of(context).setDragPercent(percent);
   }
 }
