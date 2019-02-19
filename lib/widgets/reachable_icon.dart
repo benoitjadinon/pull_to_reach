@@ -4,16 +4,20 @@ import 'package:pull_to_reach/widgets/reachable.dart';
 class ReachableIcon extends StatefulWidget {
   final Widget icon;
   final int index;
-  final double size;
   final VoidCallback onSelect;
-  final Duration duration;
 
-  ReachableIcon(
-      {@required this.icon,
-      @required this.index,
-      this.size = 24,
-      @required this.onSelect,
-      this.duration = const Duration(milliseconds: 100)});
+  final Duration duration;
+  final EdgeInsets padding;
+  final double scaleFactor;
+
+  ReachableIcon({
+    @required this.icon,
+    @required this.index,
+    @required this.onSelect,
+    this.padding = const EdgeInsets.all(8),
+    this.duration = const Duration(milliseconds: 100),
+    this.scaleFactor = 1.25,
+  });
 
   @override
   _ReachableIconState createState() => _ReachableIconState();
@@ -22,7 +26,6 @@ class ReachableIcon extends StatefulWidget {
 class _ReachableIconState extends State<ReachableIcon>
     with TickerProviderStateMixin {
   AnimationController _animationController;
-
   Animation<double> _iconScaleAnimation;
 
   @override
@@ -35,7 +38,7 @@ class _ReachableIconState extends State<ReachableIcon>
     _iconScaleAnimation = CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ).drive(Tween(begin: 1, end: 1.5));
+    );
 
     super.initState();
   }
@@ -52,16 +55,15 @@ class _ReachableIconState extends State<ReachableIcon>
           _animationController.reverse();
         }
       },
-      child: AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, _) {
-          return IconButton(
-            icon: widget.icon,
-            onPressed: widget.onSelect,
-            iconSize: _iconScaleAnimation.value * widget.size,
-          );
-        },
-        child: Container(),
+      child: ScaleTransition(
+        scale: _iconScaleAnimation.drive(Tween(
+          begin: 1,
+          end: widget.scaleFactor,
+        )),
+        child: Container(
+          margin: widget.padding,
+          child: widget.icon,
+        ),
       ),
     );
   }
