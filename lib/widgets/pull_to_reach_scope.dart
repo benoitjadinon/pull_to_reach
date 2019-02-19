@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_reach/index_calculator/weighted_index.dart';
 import 'package:pull_to_reach/reachable_feedback.dart';
 import 'package:pull_to_reach/util.dart';
+import 'package:pull_to_reach/widgets/highlighter.dart';
 import 'package:pull_to_reach/widgets/scroll_to_index_converter.dart';
 
 class PullToReachScope extends StatelessWidget {
@@ -82,7 +83,7 @@ class PullToReachContext extends InheritedWidget {
         _indexCount = indexCount,
         assert(indices == null || indexCount == null,
             "Either specify the amount of indeces with count or indices!"),
-        super(key: key, child: child);
+        super(key: key, child: Highlighter(child: child));
 
   static PullToReachContext of(BuildContext context) =>
       context.inheritFromWidgetOfExactType(PullToReachContext)

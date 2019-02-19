@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pull_to_reach/widgets/highlighter.dart';
 import 'package:pull_to_reach/widgets/reachable.dart';
 
 class ReachableIcon extends StatefulWidget {
@@ -47,9 +48,13 @@ class _ReachableIconState extends State<ReachableIcon>
   Widget build(BuildContext context) {
     return Reachable(
       index: widget.index,
-      onSelect: widget.onSelect,
+      onSelect: () {
+        Highlighter.of(context).removeHighlight();
+        widget.onSelect();
+      },
       onFocusChanged: (isFocused) {
         if (isFocused) {
+          Highlighter.of(context).highlight(context);
           _animationController.forward();
         } else {
           _animationController.reverse();
