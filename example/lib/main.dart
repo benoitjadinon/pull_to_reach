@@ -59,24 +59,27 @@ class TestPageState extends State<TestPage> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar() => AppBar(
-        actions: [
-          ReachableIcon(
-            icon: Icon(Icons.refresh),
-            index: 3,
-            onSelect: () => _showMessage("Refreshing..."),
-          ),
-          ReachableIcon(
-            icon: Icon(Icons.search),
-            index: 2,
-            onSelect: () => _showMessage("search!"),
-          ),
-          ReachableIcon(
-              icon: Icon(Icons.settings),
-              index: 1,
-              onSelect: () => _showMessage("settings!")),
-        ],
-      );
+  PreferredSizeWidget _buildAppBar() {
+    var iconColor = Theme.of(context).primaryTextTheme.title.color;
+    return AppBar(
+      actions: [
+        ReachableIcon(
+          builder: (context) => Icon(Icons.refresh, color: iconColor),
+          index: 3,
+          onSelect: () => _showMessage("Refreshing..."),
+        ),
+        ReachableIcon(
+          builder: (context) => Icon(Icons.search, color: iconColor),
+          index: 2,
+          onSelect: () => _showMessage("search!"),
+        ),
+        ReachableIcon(
+            builder: (context) => Icon(Icons.settings, color: iconColor),
+            index: 1,
+            onSelect: () => _showMessage("settings!")),
+      ],
+    );
+  }
 
   Widget _buildList() => ListView.builder(
       itemCount: 100,

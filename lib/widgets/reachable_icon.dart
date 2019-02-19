@@ -3,7 +3,6 @@ import 'package:pull_to_reach/widgets/highlighter.dart';
 import 'package:pull_to_reach/widgets/reachable.dart';
 
 class ReachableIcon extends StatefulWidget {
-  final Widget icon;
   final int index;
   final VoidCallback onSelect;
 
@@ -11,16 +10,18 @@ class ReachableIcon extends StatefulWidget {
   final EdgeInsets padding;
   final double scaleFactor;
 
+  final WidgetBuilder builder;
   final WidgetBuilder focusBuilder;
 
-  ReachableIcon(
-      {@required this.icon,
-      @required this.index,
-      @required this.onSelect,
-      this.padding = const EdgeInsets.all(8),
-      this.duration = const Duration(milliseconds: 100),
-      this.scaleFactor = 1.25,
-      this.focusBuilder});
+  ReachableIcon({
+    @required this.builder,
+    @required this.index,
+    @required this.onSelect,
+    this.padding = const EdgeInsets.all(8),
+    this.duration = const Duration(milliseconds: 100),
+    this.scaleFactor = 1.25,
+    this.focusBuilder,
+  });
 
   @override
   _ReachableIconState createState() => _ReachableIconState();
@@ -48,7 +49,7 @@ class _ReachableIconState extends State<ReachableIcon>
 
   @override
   Widget build(BuildContext context) {
-    WidgetBuilder builder = (context) {
+    var scaleChildBuilder = (Widget child) {
       return ScaleTransition(
         scale: _iconScaleAnimation.drive(Tween(
           begin: 1,
@@ -58,13 +59,17 @@ class _ReachableIconState extends State<ReachableIcon>
           onTap: widget.onSelect,
           child: Container(
             margin: widget.padding,
-            child: widget.icon,
+            child: child,
           ),
         ),
       );
     };
 
-    WidgetBuilder focusBuilder = widget.focusBuilder ?? builder;
+    var focusBuilder = (context) {
+      return widget.focusBuilder != null
+          ? scaleChildBuilder(widget.focusBuilder(context))
+          : scaleChildBuilder(widget.builder(context));
+    };
 
     return Reachable(
       index: widget.index,
@@ -80,7 +85,7 @@ class _ReachableIconState extends State<ReachableIcon>
           _animationController.reverse();
         }
       },
-      child: builder(context),
+      child: scaleChildBuilder(widget.builder(context)),
     );
   }
 }
