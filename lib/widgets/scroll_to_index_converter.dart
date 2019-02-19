@@ -93,16 +93,16 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     if (notification.metrics.extentBefore > 0) return false;
 
     // Whenever dragDetails are null the scrolling happened without users input
-    // meaning that the user release the finger --> drag has ended.
+    // meaning that the user released the finger --> drag has ended.
     // For Cupertino Scrollables the ScrollEndNotification can not be used
     // since it will be send after the list scroll has completely ended and
-    // the list is in its initial state
+    // the list is in its initial state.
     if (notification is ScrollUpdateNotification &&
         notification.dragDetails == null) {
       return true;
     }
 
-    // For Material Scrollables we can simply use the ScrollEndNotification
+    // For Material Scrollables we can simply use the ScrollEndNotification.
     if (notification is ScrollEndNotification) {
       return true;
     }
@@ -113,7 +113,7 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
   double _calculateScrollProgress(ScrollNotification notification) {
     var containerExtent = notification.metrics.viewportDimension;
 
-    // reset drag offset since user is scrolling down
+    // reset drag offset since user is scrolling down.
     if (notification.metrics.extentBefore > 0.0) {
       _dragOffset = 0;
       return 0;

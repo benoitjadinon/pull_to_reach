@@ -60,9 +60,12 @@ class _ReachableIconState extends State<ReachableIcon>
           begin: 1,
           end: widget.scaleFactor,
         )),
-        child: Container(
-          margin: widget.padding,
-          child: widget.icon,
+        child: InkResponse(
+          onTap: widget.onSelect,
+          child: Container(
+            margin: widget.padding,
+            child: widget.icon,
+          ),
         ),
       ),
     );
