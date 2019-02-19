@@ -48,34 +48,52 @@ class HighlighterState extends State<Highlighter> {
   double _opacity = 0;
   Offset _center = Offset(0, 0);
 
+  WidgetBuilder _overlayBuilder;
+
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      widget.child,
-      AnimatedPositioned(
-        left: _center.dx - _size / 2,
-        top: _center.dy - _size / 2,
-        curve: widget.positionCurve,
-        child: AnimatedContainer(
-          curve: widget.scaleCurve,
-          decoration: BoxDecoration(
-            color: Colors.black45.withOpacity(_opacity),
-            shape: BoxShape.circle,
-          ),
-          height: _size,
-          width: _size,
-          duration: widget.scaleDuration,
+    var left = _center.dx - _size / 2;
+    var top = _center.dy - _size / 2;
+
+    return Material(
+      type: MaterialType.transparency,
+      child: Stack(children: [
+        widget.child,
+        AnimatedPositioned(
+          left: left,
+          top: top,
+          curve: widget.positionCurve,
+          child: AnimatedContainer(
+              curve: widget.scaleCurve,
+              decoration: BoxDecoration(
+                color: Colors.black45.withOpacity(_opacity),
+                shape: BoxShape.circle,
+              ),
+              height: _size,
+              width: _size,
+              duration: widget.scaleDuration),
+          duration: widget.positionDuration,
         ),
-        duration: widget.positionDuration,
-      )
-    ]);
+        Positioned(
+            left: left,
+            top: top,
+            child: Container(
+              height: _size,
+              width: _size,
+              alignment: Alignment.center,
+              child: _overlayBuilder == null
+                  ? Container()
+                  : _overlayBuilder(context),
+            ))
+      ]),
+    );
   }
 
   // -----
   // Public Api
   // -----
 
-  void highlight(BuildContext widgetContext) {
+  void highlight(BuildContext widgetContext, WidgetBuilder overlayBuilder) {
     var box = widgetContext.findRenderObject() as RenderBox;
 
     var size = max(box.size.width, box.size.height);
@@ -87,6 +105,7 @@ class HighlighterState extends State<Highlighter> {
       _size = size;
       _center = center;
       _opacity = widget.opacity;
+      _overlayBuilder = overlayBuilder;
     });
   }
 
@@ -94,6 +113,7 @@ class HighlighterState extends State<Highlighter> {
     setState(() {
       _size = _size * widget.sizeFactor;
       _opacity = 0;
+      _overlayBuilder = null;
     });
   }
 }

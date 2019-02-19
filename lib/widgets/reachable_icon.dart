@@ -11,14 +11,16 @@ class ReachableIcon extends StatefulWidget {
   final EdgeInsets padding;
   final double scaleFactor;
 
-  ReachableIcon({
-    @required this.icon,
-    @required this.index,
-    @required this.onSelect,
-    this.padding = const EdgeInsets.all(8),
-    this.duration = const Duration(milliseconds: 100),
-    this.scaleFactor = 1.25,
-  });
+  final WidgetBuilder focusBuilder;
+
+  ReachableIcon(
+      {@required this.icon,
+      @required this.index,
+      @required this.onSelect,
+      this.padding = const EdgeInsets.all(8),
+      this.duration = const Duration(milliseconds: 100),
+      this.scaleFactor = 1.25,
+      this.focusBuilder});
 
   @override
   _ReachableIconState createState() => _ReachableIconState();
@@ -46,21 +48,8 @@ class _ReachableIconState extends State<ReachableIcon>
 
   @override
   Widget build(BuildContext context) {
-    return Reachable(
-      index: widget.index,
-      onSelect: () {
-        Highlighter.of(context).removeHighlight();
-        widget.onSelect();
-      },
-      onFocusChanged: (isFocused) {
-        if (isFocused) {
-          Highlighter.of(context).highlight(context);
-          _animationController.forward();
-        } else {
-          _animationController.reverse();
-        }
-      },
-      child: ScaleTransition(
+    WidgetBuilder builder = (context) {
+      return ScaleTransition(
         scale: _iconScaleAnimation.drive(Tween(
           begin: 1,
           end: widget.scaleFactor,
@@ -72,7 +61,26 @@ class _ReachableIconState extends State<ReachableIcon>
             child: widget.icon,
           ),
         ),
-      ),
+      );
+    };
+
+    WidgetBuilder focusBuilder = widget.focusBuilder ?? builder;
+
+    return Reachable(
+      index: widget.index,
+      onSelect: () {
+        Highlighter.of(context).removeHighlight();
+        widget.onSelect();
+      },
+      onFocusChanged: (isFocused) {
+        if (isFocused) {
+          Highlighter.of(context).highlight(context, focusBuilder);
+          _animationController.forward();
+        } else {
+          _animationController.reverse();
+        }
+      },
+      child: builder(context),
     );
   }
 }
