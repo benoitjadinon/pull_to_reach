@@ -63,6 +63,7 @@ class HighlighterState extends State<Highlighter> {
           left: left,
           top: top,
           curve: widget.positionCurve,
+          duration: widget.positionDuration,
           child: AnimatedContainer(
               curve: widget.scaleCurve,
               decoration: BoxDecoration(
@@ -72,7 +73,6 @@ class HighlighterState extends State<Highlighter> {
               height: _size,
               width: _size,
               duration: widget.scaleDuration),
-          duration: widget.positionDuration,
         ),
         Positioned(
             left: left,
@@ -98,8 +98,6 @@ class HighlighterState extends State<Highlighter> {
 
     var size = max(box.size.width, box.size.height);
     var center = box.size.center(box.localToGlobal(Offset(0.0, 0.0)));
-
-    if (_opacity == 0) _center = center;
 
     setState(() {
       _size = size;
