@@ -11,6 +11,7 @@ Pull to reach is utilizing the pull gesture to overcome the problem of accessing
  
 ```dart
   PullToReachContext(
+      indexCount: 4,
       child: Scaffold(
       appBar: AppBar(
         actions: [
