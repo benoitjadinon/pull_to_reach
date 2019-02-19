@@ -1,7 +1,6 @@
 # Pull-To-Reach
 
 Pull to reach is utilizing the pull gesture to overcome the problem of accessing the non-reachable controls of an app by highlighting them and triggering them once you release your thumb!
-This Library consumes `ScrollNotifications` and therefore only works with a Scrollable e.g. `ListView`.  
 
 
 ## Usage
