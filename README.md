@@ -2,7 +2,10 @@
 
 Pull to reach is utilizing the pull gesture to overcome the problem of accessing the non-reachable controls of an app by highlighting them and triggering them once you release your thumb!
 
-<img src="./media/example.gif" alt="example" width="200"/>
+<br><br>
+###### example
+<img src="https://github.com/TiO-Design/pull_to_reach/blob/master/media/example.gif?raw=true" width="250">
+<br><br>
 
 ## Install
 
