@@ -4,7 +4,7 @@ Pull to reach is utilizing the pull gesture to overcome the problem of accessing
 
 <br><br>
 ###### example
-<img src="https://github.com/TiO-Design/pull_to_reach/blob/master/media/example.gif?raw=true" width="250">
+<img src="https://github.com/TiO-Design/pull_to_reach/blob/master/media/example.gif" width="443">
 <br><br>
 
 ## Install
