@@ -69,7 +69,7 @@ class _ScrollToIndexConverterState extends State<ScrollToIndexConverter>
     }
 
     var progress = _calculateScrollProgress(notification);
-    print(progress);
+    //print(progress);
     var index = _indexCalculator.getIndexForScrollPercent(progress).index;
     _updateScrollPercent(progress);
 
